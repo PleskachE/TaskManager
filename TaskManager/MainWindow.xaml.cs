@@ -40,5 +40,14 @@ namespace TaskManager
             ProcessDataGrid.ItemsSource = Processes;
         }
 
+        private void StopButt_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void NewProcessButt_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

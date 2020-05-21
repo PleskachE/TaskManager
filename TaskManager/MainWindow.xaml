@@ -6,15 +6,17 @@
     xmlns:local="clr-namespace:TaskManager"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:repositories="clr-namespace:TaskManager.Repositoryes"
-    xmlns:ribbon="clr-namespace:Microsoft.Windows.Controls.Ribbon;assembly=RibbonControlsLibrary"
+    xmlns:ribbon="clr-namespace:System.Windows.Controls.Ribbon;assembly=System.Windows.Controls.Ribbon"
     Title="Диспетчер задач"
     Width="800"
-    Height="450"
+    Height="600"
+    MinWidth="500"
+    MinHeight="300"
     mc:Ignorable="d">
 
     <Window.Resources>
         <repositories:ProcessRepository x:Key="ProcessRepository" />
-        
+
         <DataTemplate x:Key="ProcessDataTemplate">
             <DataGrid>
                 <DataGrid.Columns>
@@ -34,22 +36,94 @@
                 </DataGrid.Columns>
             </DataGrid>
         </DataTemplate>
-        
+
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
+        <ribbon:Ribbon Grid.Row="0" x:Name="RibonPanel">
+            <ribbon:Ribbon.ApplicationMenu>
+                <ribbon:RibbonApplicationMenu SmallImageSource="Icons\Play.png">
+                    <ribbon:RibbonApplicationMenuItem
+                        x:Name="MenuItem1"
+                        Header="Hello _Ribbon"
+                        ImageSource="Icons\Play.png" />
+                    <ribbon:RibbonApplicationMenuItem
+                        x:Name="MenuItem2"
+                        Header="Hello _Ribbon"
+                        ImageSource="Icons\Play.png" />
+                </ribbon:RibbonApplicationMenu>
+            </ribbon:Ribbon.ApplicationMenu>
+            <ribbon:RibbonTab x:Name="PrimaryTab" Header="Главная">
+                <ribbon:RibbonGroup x:Name="StartGroup" Header="Запуск процесса">
+                    <ribbon:RibbonButton
+                        x:Name="StartButt"
+                        Margin="15,0,0,0"
+                        HorizontalAlignment="Center"
+                        Label="Новый процесс"
+                        LargeImageSource="Icons\Play.png" />
+                </ribbon:RibbonGroup>
+                <ribbon:RibbonGroup x:Name="SearchGroup" Header="Поиск процесса">
+                    <ribbon:RibbonTextBox
+                        x:Name="SearchBox"
+                        MinWidth="100"
+                        Margin="0,15,0,0" />
+                    <ribbon:RibbonButton
+                        x:Name="SearchBut"
+                        Label="Поиск"
+                        LargeImageSource="Icons/search.png" />
+
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
+            <ribbon:RibbonTab x:Name="ViewsTab" Header="Вид">
+                <ribbon:RibbonGroup x:Name="ThemesGroup" Header="Оформление">
+                    <StackPanel Orientation="Horizontal">
+                        <ribbon:RibbonButton
+                            x:Name="OrangeThemeButt"
+                            Margin="5"
+                            Background="Orange"
+                            Label="Оранжевый" />
+                        <ribbon:RibbonButton
+                            x:Name="GreenThemeButt"
+                            Margin="5"
+                            Background="Green"
+                            Label="Зелёный" />
+                        <ribbon:RibbonButton
+                            x:Name="SilverThemeButt"
+                            Margin="5"
+                            Background="Silver"
+                            Label="Серебристый" />
+                    </StackPanel>
+                </ribbon:RibbonGroup>
+            </ribbon:RibbonTab>
+        </ribbon:Ribbon>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <DataGrid x:Name="ProcessDataGrid" DataContext="{StaticResource ProcessDataTemplate}" />
         </Grid>
+        <StackPanel
+            Grid.Row="2"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal">
+            <Label Margin="5" Content="Текущий процесс:" />
+            <TextBlock
+                x:Name="SelectedProcessName"
+                MinWidth="150"
+                Margin="10"
+                Text="{Binding ElementName=ProcessDataGrid, Path=SelectedItem}" />
+            <Button
+                x:Name="StopButt"
+                Margin="5"
+                Click="StopButt_Click"
+                Content="Завершить процесс" />
+        </StackPanel>
     </Grid>
 
 

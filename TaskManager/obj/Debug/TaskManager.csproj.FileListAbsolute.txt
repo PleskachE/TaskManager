@@ -13,6 +13,4 @@ C:\Users\Sony\source\repos\TaskManager\TaskManager\obj\Debug\TaskManager.csproj.
 C:\Users\Sony\source\repos\TaskManager\TaskManager\obj\Debug\TaskManager.csproj.CoreCompileInputs.cache
 C:\Users\Sony\source\repos\TaskManager\TaskManager\obj\Debug\TaskManager.exe
 C:\Users\Sony\source\repos\TaskManager\TaskManager\obj\Debug\TaskManager.pdb
-C:\Users\Sony\source\repos\TaskManager\TaskManager\bin\Debug\RibbonControlsLibrary.dll
-C:\Users\Sony\source\repos\TaskManager\TaskManager\obj\Debug\TaskManager.csproj.CopyComplete
 C:\Users\Sony\source\repos\TaskManager\TaskManager\obj\Debug\GeneratedInternalTypeHelper.g.cs
