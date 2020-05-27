@@ -4,20 +4,19 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TaskManager.Model;
 
 namespace TaskManager.Repositoryes
 {
     public class ProcessRepository
     {
-        public List<ProcessInfo> Processes { get; set; }
+        public List<Process> Processes { get; set; }
         public ProcessRepository()
         {
-            Processes = new List<ProcessInfo>();
+            Processes = new List<Process>();
             foreach (Process process in Process.GetProcesses())
-                Processes.Add(new ProcessInfo { Id=process.Id, Name=process.ProcessName, Memory=process.VirtualMemorySize64.ToString()});
+                Processes.Add(process);
         }
-        public List<ProcessInfo> Get()
+        public List<Process> Get()
         {
             return Processes;
         }

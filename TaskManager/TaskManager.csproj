@@ -56,8 +56,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\ProcessInfo.cs" />
     <Compile Include="Repositoryes\ProcessRepository.cs" />
+    <Compile Include="TemplateSelectors\ProcessTemplateSelector.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -103,9 +103,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\Play.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Icons\search.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

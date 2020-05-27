@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:repositories="clr-namespace:TaskManager.Repositoryes"
     xmlns:ribbon="clr-namespace:System.Windows.Controls.Ribbon;assembly=System.Windows.Controls.Ribbon"
+    xmlns:templateSelectors="clr-namespace:TaskManager.TemplateSelectors"
     Title="Диспетчер задач"
     Width="800"
     Height="600"
@@ -17,25 +18,57 @@
     <Window.Resources>
         <repositories:ProcessRepository x:Key="ProcessRepository" />
 
-        <DataTemplate x:Key="ProcessDataTemplate">
-            <DataGrid>
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Width="*">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Border
-                                    Margin="5"
-                                    BorderBrush="Red"
-                                    BorderThickness="3"
-                                    CornerRadius="5">
-                                    <TextBlock FontSize="20" FontWeight="Bold" />
-                                </Border>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+        <DataTemplate x:Key="MemoryDataTemplate">
+            <Border Background="Gray">
+                <TextBlock Text="{Binding PagedSystemMemorySize}" />
+            </Border>
         </DataTemplate>
+
+        <DataTemplate x:Key="NewMemoryDataTemplate">
+            <Border Background="Red">
+                <TextBlock Text="{Binding PagedSystemMemorySize}" />
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="Id">
+            <Border Background="Gray">
+                <TextBlock Text="{Binding Id}" />
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="Name">
+            <Border Background="Gray">
+                <TextBlock Text="{Binding ProcessName}" />
+            </Border>
+        </DataTemplate>
+
+        <ControlTemplate x:Key="ListBoxTemplate" TargetType="ListBox">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <Label Margin="5" Content="Id : " />
+                    <TextBlock Margin="10" Text="{Binding Id}" />
+                </StackPanel>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label Margin="5" Content="Имя : " />
+                    <TextBlock Margin="10" Text="{Binding ProcessName}" />
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label Margin="5" Content="Базовый приоритет : " />
+                    <TextBlock Margin="10" Text="{Binding BasePriority}" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <Label Margin="5" Content="Память : " />
+                    <TextBlock Margin="10" Text="{Binding PagedSystemMemorySize}" />
+                </StackPanel>
+            </Grid>
+        </ControlTemplate>
 
     </Window.Resources>
 
@@ -45,17 +78,13 @@
             <RowDefinition />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <ribbon:Ribbon Grid.Row="0" x:Name="RibonPanel">
+        <ribbon:Ribbon x:Name="RibonPanel" Grid.Row="0">
             <ribbon:Ribbon.ApplicationMenu>
                 <ribbon:RibbonApplicationMenu SmallImageSource="Icons\Play.png">
                     <ribbon:RibbonApplicationMenuItem
-                        x:Name="MenuItem1"
-                        Header="Hello _Ribbon"
-                        ImageSource="Icons\Play.png" />
-                    <ribbon:RibbonApplicationMenuItem
-                        x:Name="MenuItem2"
-                        Header="Hello _Ribbon"
-                        ImageSource="Icons\Play.png" />
+                        x:Name="CloseWindow"
+                        Click="CloseWindow_Click"
+                        Header="Закрыть диспетчер процессов" />
                 </ribbon:RibbonApplicationMenu>
             </ribbon:Ribbon.ApplicationMenu>
             <ribbon:RibbonTab x:Name="PrimaryTab" Header="Главная">
@@ -64,19 +93,16 @@
                         x:Name="StartButt"
                         Margin="15,0,0,0"
                         HorizontalAlignment="Center"
+                        Click="StartButt_Click"
                         Label="Новый процесс"
                         LargeImageSource="Icons\Play.png" />
                 </ribbon:RibbonGroup>
                 <ribbon:RibbonGroup x:Name="SearchGroup" Header="Поиск процесса">
                     <ribbon:RibbonTextBox
-                        x:Name="SearchBox"
+                        x:Name="FilterBox"
                         MinWidth="100"
-                        Margin="0,15,0,0" />
-                    <ribbon:RibbonButton
-                        x:Name="SearchBut"
-                        Label="Поиск"
-                        LargeImageSource="Icons/search.png" />
-
+                        Margin="0,15,0,0"
+                        TextChanged="FilterBox_TextChanged" />
                 </ribbon:RibbonGroup>
             </ribbon:RibbonTab>
             <ribbon:RibbonTab x:Name="ViewsTab" Header="Вид">
@@ -86,17 +112,14 @@
                             x:Name="OrangeThemeButt"
                             Margin="5"
                             Background="Orange"
+                            Click="OrangeThemeButt_Click"
                             Label="Оранжевый" />
                         <ribbon:RibbonButton
                             x:Name="GreenThemeButt"
                             Margin="5"
                             Background="Green"
+                            Click="GreenThemeButt_Click"
                             Label="Зелёный" />
-                        <ribbon:RibbonButton
-                            x:Name="SilverThemeButt"
-                            Margin="5"
-                            Background="Silver"
-                            Label="Серебристый" />
                     </StackPanel>
                 </ribbon:RibbonGroup>
             </ribbon:RibbonTab>
@@ -106,7 +129,35 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <DataGrid x:Name="ProcessDataGrid" DataContext="{StaticResource ProcessDataTemplate}" />
+            <DataGrid
+                x:Name="ProcessDataGrid"
+                AutoGenerateColumns="False"
+                ItemsSource="{Binding Source={StaticResource ProcessRepository}, Path=Processes, UpdateSourceTrigger=PropertyChanged}">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn
+                        Width="auto"
+                        CellTemplate="{StaticResource Id}"
+                        Header="ID"
+                        SortMemberPath="Id" />
+                    <DataGridTemplateColumn
+                        Width="*"
+                        CellTemplate="{StaticResource Name}"
+                        Header="Имя"
+                        SortMemberPath="ProcessName" />
+                    <DataGridTemplateColumn
+                        Width="*"
+                        Header="Память"
+                        SortMemberPath="PagedSystemMemorySize">
+                        <DataGridTemplateColumn.CellTemplateSelector>
+                            <templateSelectors:ProcessTemplateSelector MemoryTemplate="{StaticResource MemoryDataTemplate}" NewMemoryTemplate="{StaticResource NewMemoryDataTemplate}" />
+                        </DataGridTemplateColumn.CellTemplateSelector>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <ListBox
+                Grid.Column="1"
+                DataContext="{Binding ElementName=ProcessDataGrid, Path=SelectedItem}"
+                Template="{StaticResource ListBoxTemplate}" />
         </Grid>
         <StackPanel
             Grid.Row="2"
@@ -117,7 +168,7 @@
                 x:Name="SelectedProcessName"
                 MinWidth="150"
                 Margin="10"
-                Text="{Binding ElementName=ProcessDataGrid, Path=SelectedItem}" />
+                Text="{Binding ElementName=ProcessDataGrid, Path=SelectedItem.ProcessName, Mode=OneWay}" />
             <Button
                 x:Name="StopButt"
                 Margin="5"
