@@ -1,23 +1,13 @@
 ﻿using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using TaskManager.Repositoryes;
-using Path = System.IO.Path;
 
 namespace TaskManager
 {
@@ -42,8 +32,26 @@ namespace TaskManager
         }
         private void Timer_tick(object sender, EventArgs e)
         {
-            
-           
+            Process _tempProcess;
+            TimeSpan _time;
+            try
+            {
+                _tempProcess = ProcessDataGrid.SelectedItem as Process;
+            }
+            catch
+            {
+                TimeBox.Text = null;
+                _tempProcess = null;
+            }
+            if(_tempProcess != null)
+            {
+                try
+                {
+                    _time = DateTime.Now - _tempProcess.StartTime;
+                    TimeBox.Text = String.Format("{0:00} : {1:00} : {2:00}", _time.Hours, _time.Minutes, _time.Seconds);
+                }
+                catch { TimeBox.Text = null; }
+            }
         }
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
@@ -51,12 +59,14 @@ namespace TaskManager
             collection.ForEach(p => Processes.Add(p));
             ItemSourceList = new CollectionViewSource() { Source = Processes };
             ProcessDataGrid.ItemsSource = ItemSourceList.View;
+            Timer.Start();
         }
         private void StopButt_Click(object sender, RoutedEventArgs e)
         {
             var _item = Processes.First(x => x.Id == (ProcessDataGrid.SelectedItem as Process).Id);
             Processes.First(x => x.Id == (ProcessDataGrid.SelectedItem as Process).Id).Kill();
             Processes.Remove(_item);
+            TimeBox.Text = null;
         }
         private void StartButt_Click(object sender, RoutedEventArgs e)
         {
@@ -77,12 +87,16 @@ namespace TaskManager
 
         private void GreenThemeButt_Click(object sender, RoutedEventArgs e)
         {
-
+            ResourceDictionary _newDictionary = new ResourceDictionary();
+            _newDictionary.Source = new Uri("Resources/GreenStyle.xaml", UriKind.Relative);
+            this.Resources.MergedDictionaries.Add(_newDictionary);
         }
 
         private void OrangeThemeButt_Click(object sender, RoutedEventArgs e)
         {
-
+            ResourceDictionary _newDictionary = new ResourceDictionary();
+            _newDictionary.Source = new Uri("Resources/OrangeStyle.xaml", UriKind.Relative);
+            this.Resources.MergedDictionaries.Add(_newDictionary);
         }
 
         private void CloseWindow_Click(object sender, RoutedEventArgs e)

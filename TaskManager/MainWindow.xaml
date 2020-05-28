@@ -2,6 +2,7 @@
     x:Class="TaskManager.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:TaskManager.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:TaskManager"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -17,27 +18,29 @@
 
     <Window.Resources>
         <repositories:ProcessRepository x:Key="ProcessRepository" />
+        <converters:TimeConverter x:Key="TimeConverter" />
+        <converters:MemoryConverter x:Key="MemoryConvertrer" />
 
         <DataTemplate x:Key="MemoryDataTemplate">
-            <Border Background="Gray">
-                <TextBlock Text="{Binding PagedSystemMemorySize}" />
+            <Border>
+                <TextBlock Text="{Binding PagedSystemMemorySize, Converter={StaticResource MemoryConvertrer}}" />
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="NewMemoryDataTemplate">
             <Border Background="Red">
-                <TextBlock Text="{Binding PagedSystemMemorySize}" />
+                <TextBlock Text="{Binding PagedSystemMemorySize, Converter={StaticResource MemoryConvertrer}}" />
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="Id">
-            <Border Background="Gray">
+            <Border>
                 <TextBlock Text="{Binding Id}" />
             </Border>
         </DataTemplate>
 
         <DataTemplate x:Key="Name">
-            <Border Background="Gray">
+            <Border>
                 <TextBlock Text="{Binding ProcessName}" />
             </Border>
         </DataTemplate>
@@ -45,6 +48,7 @@
         <ControlTemplate x:Key="ListBoxTemplate" TargetType="ListBox">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="auto" />
@@ -65,20 +69,26 @@
                 </StackPanel>
                 <StackPanel Grid.Row="3" Orientation="Horizontal">
                     <Label Margin="5" Content="Память : " />
-                    <TextBlock Margin="10" Text="{Binding PagedSystemMemorySize}" />
+                    <TextBlock Margin="10" Text="{Binding PagedSystemMemorySize, Converter={StaticResource MemoryConvertrer}}" />
+                </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <Label Margin="5" Content="Время запуска процесса : " />
+                    <TextBlock Margin="10" Text="{Binding StartTime, Converter={StaticResource TimeConverter}}" />
                 </StackPanel>
             </Grid>
         </ControlTemplate>
-
     </Window.Resources>
 
-    <Grid>
+    <Grid Style="{DynamicResource GridStyle}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <ribbon:Ribbon x:Name="RibonPanel" Grid.Row="0">
+        <ribbon:Ribbon
+            x:Name="RibonPanel"
+            Grid.Row="0"
+            Style="{DynamicResource RibbonStyle}">
             <ribbon:Ribbon.ApplicationMenu>
                 <ribbon:RibbonApplicationMenu SmallImageSource="Icons\Play.png">
                     <ribbon:RibbonApplicationMenuItem
@@ -132,6 +142,7 @@
             <DataGrid
                 x:Name="ProcessDataGrid"
                 AutoGenerateColumns="False"
+                CellStyle="{DynamicResource CellStyle}"
                 ItemsSource="{Binding Source={StaticResource ProcessRepository}, Path=Processes, UpdateSourceTrigger=PropertyChanged}">
                 <DataGrid.Columns>
                     <DataGridTemplateColumn
@@ -154,10 +165,20 @@
                     </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
-            <ListBox
-                Grid.Column="1"
-                DataContext="{Binding ElementName=ProcessDataGrid, Path=SelectedItem}"
-                Template="{StaticResource ListBoxTemplate}" />
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <ListBox
+                    Grid.Row="0"
+                    DataContext="{Binding ElementName=ProcessDataGrid, Path=SelectedItem}"
+                    Template="{StaticResource ListBoxTemplate}" />
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label Margin="5" Content="Полное время процесса" />
+                    <TextBlock x:Name="TimeBox" Margin="10" />
+                </StackPanel>
+            </Grid>
         </Grid>
         <StackPanel
             Grid.Row="2"
@@ -173,9 +194,8 @@
                 x:Name="StopButt"
                 Margin="5"
                 Click="StopButt_Click"
-                Content="Завершить процесс" />
+                Content="Завершить процесс"
+                Style="{DynamicResource ButtonStyle}" />
         </StackPanel>
     </Grid>
-
-
 </Window>

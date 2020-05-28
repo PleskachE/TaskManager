@@ -14,3 +14,6 @@ C:\Users\Sony\source\repos\TaskManager\TaskManager\obj\Debug\TaskManager.csproj.
 C:\Users\Sony\source\repos\TaskManager\TaskManager\obj\Debug\TaskManager.exe
 C:\Users\Sony\source\repos\TaskManager\TaskManager\obj\Debug\TaskManager.pdb
 C:\Users\Sony\source\repos\TaskManager\TaskManager\obj\Debug\GeneratedInternalTypeHelper.g.cs
+C:\Users\Sony\source\repos\TaskManager\TaskManager\obj\Debug\App.baml
+C:\Users\Sony\source\repos\TaskManager\TaskManager\obj\Debug\Resources\GreenStyle.baml
+C:\Users\Sony\source\repos\TaskManager\TaskManager\obj\Debug\Resources\OrangeStyle.baml

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -19,7 +14,7 @@ namespace TaskManager.TemplateSelectors
             
             if (item is Process process)
             {
-                if ((process.PagedSystemMemorySize / 1000000) > 10)
+                if (process.PagedSystemMemorySize > 100000)
                     return NewMemoryTemplate;
             }
             return MemoryTemplate;
